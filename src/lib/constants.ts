@@ -1,13 +1,6 @@
 import type { ContactStatus } from "@/types/contact";
 import type { FollowUpChannel } from "@/types/activity";
 
-/** Fictional signed-in intake coordinator used as note/activity author. */
-export const CURRENT_USER = {
-  name: "Mariam Al Hashimi",
-  role: "Intake Coordinator",
-  initials: "MA",
-} as const;
-
 export const STATUS_META: Record<
   ContactStatus,
   { label: string; description: string }

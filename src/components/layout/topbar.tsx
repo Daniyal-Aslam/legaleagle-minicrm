@@ -6,14 +6,13 @@ import { useState } from "react";
 import { ChevronRight, Menu, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@/components/ui/sheet";
-import { CURRENT_USER } from "@/lib/constants";
 import { getFullName } from "@/lib/contacts/selectors";
 import { useCrm } from "@/store";
 import { useUiStore } from "@/store/ui-store";
 import { BrandMark } from "./brand-mark";
 import { NAV_ITEMS, isNavActive } from "./nav-config";
-import { SidebarFooter } from "./sidebar-footer";
 import { SidebarNav } from "./sidebar-nav";
+import { UserMenu } from "./user-menu";
 
 function Breadcrumbs() {
   const pathname = usePathname();
@@ -81,21 +80,7 @@ export function Topbar() {
         <kbd className="hidden rounded border bg-muted px-1.5 font-sans text-2xs leading-5 sm:inline">Ctrl K</kbd>
       </button>
 
-      <div className="flex items-center gap-2.5 pl-1">
-        <span
-          className="flex size-9 items-center justify-center rounded-full bg-brand-ink font-heading text-xs font-semibold text-brand-gold"
-          aria-hidden
-        >
-          {CURRENT_USER.initials}
-        </span>
-        <div className="hidden leading-tight xl:block">
-          <p className="text-sm font-medium">{CURRENT_USER.name}</p>
-          <p className="text-xs text-muted-foreground">{CURRENT_USER.role}</p>
-        </div>
-        <span className="sr-only">
-          Signed in as {CURRENT_USER.name}, {CURRENT_USER.role}
-        </span>
-      </div>
+      <UserMenu />
 
       <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
         <SheetContent side="left" className="w-72 gap-0 border-sidebar-border bg-sidebar p-0 text-sidebar-foreground [&>button]:text-white">
@@ -106,9 +91,6 @@ export function Topbar() {
           </div>
           <div className="flex-1 px-3 py-4">
             <SidebarNav onNavigate={() => setMenuOpen(false)} />
-          </div>
-          <div className="border-t border-sidebar-border p-3">
-            <SidebarFooter />
           </div>
         </SheetContent>
       </Sheet>

@@ -50,3 +50,4 @@ npm run lint && npm run typecheck && npm run build
 # browser smoke test against a running server (uses your installed Chrome):
 BASE_URL=http://localhost:3000 CHROME_PATH="/path/to/chrome" npm run test:e2e
 ```
+"# legaleagle-minicrm" 

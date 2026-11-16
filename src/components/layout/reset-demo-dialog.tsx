@@ -23,10 +23,10 @@ export function ResetDemoDialog({ open, onOpenChange }: Props) {
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Reset demo data?</AlertDialogTitle>
+          <AlertDialogTitle>Reset sample data?</AlertDialogTitle>
           <AlertDialogDescription>
             This replaces every contact, note and activity in this browser with the original
-            demo dataset. Changes you have made will be lost.
+            sample dataset. Changes you have made will be lost.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -34,7 +34,7 @@ export function ResetDemoDialog({ open, onOpenChange }: Props) {
           <AlertDialogAction
             onClick={() => {
               crm().resetDemoData();
-              toast.success("Demo data restored");
+              toast.success("Sample data restored");
             }}
           >
             Reset data

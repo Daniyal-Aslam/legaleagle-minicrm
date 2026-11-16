@@ -42,3 +42,4 @@ next-env.d.ts
 
 # e2e failure screenshots
 e2e-failure-*.png
+/.next-verify/

@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { EmptyState } from "@/components/shared/state-panels";
 import type { Note } from "@/types/contact";
 import { noteSchema } from "@/schemas/contact";
-import { CURRENT_USER } from "@/lib/constants";
+import { useSessionUser } from "@/components/auth/session-provider";
 import { formatDateTime, formatRelative } from "@/lib/format";
 import { pluralize } from "@/lib/utils";
 import { crm, useContactNotes } from "@/store";
@@ -56,6 +56,7 @@ export function NotesPanel({ contactId }: { contactId: string }) {
 }
 
 function NoteComposer({ contactId }: { contactId: string }) {
+  const user = useSessionUser();
   const [content, setContent] = useState("");
   const [error, setError] = useState<string>();
 
@@ -110,7 +111,7 @@ function NoteComposer({ contactId }: { contactId: string }) {
           </p>
         ) : (
           <p id="new-note-hint" className="text-xs text-muted-foreground">
-            <span className="hidden sm:inline">Ctrl + Enter to save · </span>Posting as {CURRENT_USER.name}
+            <span className="hidden sm:inline">Ctrl + Enter to save · </span>Posting as {user.name}
           </p>
         )}
         <Button type="submit" size="sm" disabled={!content.trim()}>

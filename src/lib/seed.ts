@@ -2,7 +2,6 @@ import type { Activity, FollowUpChannel } from "@/types/activity";
 import type { Contact, ContactStatus, Note } from "@/types/contact";
 import type { CrmData } from "@/lib/storage/schema";
 import { buildActivity, excerpt } from "@/lib/activity/factory";
-import { CURRENT_USER } from "@/lib/constants";
 
 /**
  * Fictional demo dataset. Every person, company, phone number and email is
@@ -12,7 +11,7 @@ import { CURRENT_USER } from "@/lib/constants";
  */
 
 const TEAM = {
-  mariam: CURRENT_USER.name,
+  mariam: "Mariam Al Hashimi",
   yousef: "Yousef Khalil",
   hana: "Hana Qureshi",
 } as const;

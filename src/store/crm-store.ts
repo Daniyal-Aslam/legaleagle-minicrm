@@ -4,7 +4,6 @@ import type { Contact, ContactInput, ContactStatus, Note } from "@/types/contact
 import type { StorageAdapter } from "@/lib/storage/adapter";
 import type { CrmData } from "@/lib/storage/schema";
 import { buildActivity, diffContact, excerpt, FIELD_LABELS } from "@/lib/activity/factory";
-import { CURRENT_USER } from "@/lib/constants";
 import { createSeedData } from "@/lib/seed";
 import { createId } from "@/lib/utils";
 
@@ -31,6 +30,8 @@ export interface CrmActions {
   recordFollowUp(contactId: string, channel: FollowUpChannel, summary: string): boolean;
   resetDemoData(): void;
   dismissRecoveryNotice(): void;
+  /** Attributes subsequent notes and activities to the signed-in user. */
+  setAuthor(name: string): void;
 }
 
 export type CrmStore = CrmState & CrmActions;
@@ -41,7 +42,8 @@ interface Options {
   author?: string;
 }
 
-export function createCrmStore({ adapter, now = () => new Date(), author = CURRENT_USER.name }: Options) {
+export function createCrmStore({ adapter, now = () => new Date(), author: initialAuthor = "Intake team" }: Options) {
+  let author = initialAuthor;
   const timestamp = () => now().toISOString();
 
   return createStore<CrmStore>()((set, get) => {
@@ -238,6 +240,10 @@ export function createCrmStore({ adapter, now = () => new Date(), author = CURRE
 
       dismissRecoveryNotice() {
         set({ recoveryNotice: null });
+      },
+
+      setAuthor(name) {
+        author = name;
       },
     };
   });

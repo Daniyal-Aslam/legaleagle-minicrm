@@ -71,7 +71,7 @@ export function ContactsView() {
             <EmptyState
               icon={UserPlus}
               title="No contacts yet"
-              description="Add your first enquiry to start building the intake pipeline, or restore the demo dataset from the sidebar."
+              description="Add your first enquiry to start building the intake pipeline, or restore the sample dataset from your account menu."
               action={
                 <Button onClick={openCreate}>
                   <Plus aria-hidden />

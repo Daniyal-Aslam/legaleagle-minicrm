@@ -8,7 +8,7 @@ import { crm, crmStore } from "@/store";
 const RECOVERY_MESSAGES = {
   "restored-from-corrupt": {
     title: "Saved data couldn't be read",
-    description: "The demo dataset has been restored so you can keep working.",
+    description: "The sample dataset has been restored so you can keep working.",
   },
   "dropped-invalid-records": {
     title: "Some saved records were skipped",

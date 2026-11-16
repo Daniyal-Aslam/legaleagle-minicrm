@@ -5,7 +5,6 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import { usePersistedBoolean } from "@/hooks/use-persisted-preference";
 import { cn } from "@/lib/utils";
 import { BrandMark } from "./brand-mark";
-import { SidebarFooter } from "./sidebar-footer";
 import { SidebarNav } from "./sidebar-nav";
 
 /** Desktop/tablet sidebar. Tablets get the icon rail; desktops can collapse. */
@@ -33,9 +32,8 @@ export function Sidebar() {
         <SidebarNav collapsed={collapsed} />
       </div>
 
-      <div className={cn("space-y-2 border-t border-sidebar-border py-3", collapsed ? "px-2.5" : "px-3")}>
-        <SidebarFooter collapsed={collapsed} />
-        {isWide ? (
+      {isWide ? (
+      <div className={cn("border-t border-sidebar-border py-3", collapsed ? "px-2.5" : "px-3")}>
           <button
             type="button"
             onClick={() => setUserCollapsed(!userCollapsed)}
@@ -55,8 +53,8 @@ export function Sidebar() {
               </>
             )}
           </button>
-        ) : null}
       </div>
+      ) : null}
     </aside>
   );
 }

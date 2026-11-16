@@ -23,8 +23,8 @@ const page = await context.newPage();
 const problems = [];
 page.on("pageerror", (e) => problems.push(e.message));
 page.on("console", (m) => {
-  // The 404 check intentionally requests a missing page; Chrome logs that as an error.
-  if (m.type() === "error" && !m.text().includes("status of 404")) problems.push(m.text());
+  // The 404 and wrong-password checks intentionally trigger 404/401 responses, which Chrome logs.
+  if (m.type() === "error" && !/status of (404|401)/.test(m.text())) problems.push(m.text());
 });
 
 let passed = 0;
@@ -46,8 +46,27 @@ const toast = (text) => page.locator("[data-sonner-toast]", { hasText: text }).f
 
 console.log(`Running against ${BASE}`);
 
-await step("loads seeded contacts", async () => {
+await step("redirects signed-out visitors to sign in", async () => {
   await page.goto(`${BASE}/contacts`);
+  await page.waitForURL(/\/login\?next=%2Fcontacts/);
+  await page.getByRole("heading", { name: "Welcome back" }).waitFor();
+});
+
+await step("rejects an incorrect password", async () => {
+  await page.getByLabel("Work email").fill("mariam@legaleagle.test");
+  await page.getByRole("textbox", { name: "Password" }).fill("wrong-password");
+  await page.getByRole("button", { name: "Sign in" }).click();
+  await page.getByRole("alert").filter({ hasText: "Incorrect email or password." }).waitFor();
+});
+
+await step("signs in with a mock account and returns to the requested page", async () => {
+  await page.getByRole("button", { name: /Mariam Al Hashimi/ }).click();
+  await page.getByRole("button", { name: "Sign in" }).click();
+  await page.waitForURL(/\/contacts$/);
+  await page.getByRole("button", { name: "Account menu for Mariam Al Hashimi" }).waitFor();
+});
+
+await step("loads seeded contacts", async () => {
   await rows().first().waitFor();
   assert.equal(await rows().count(), 13);
 });
@@ -204,9 +223,10 @@ await step("recovers from corrupted storage", async () => {
 });
 
 await step("resets demo data", async () => {
-  await page.getByRole("button", { name: "Reset demo data" }).click();
+  await page.getByRole("button", { name: /^Account menu/ }).click();
+  await page.getByRole("menuitem", { name: "Reset sample data" }).click();
   await page.getByRole("alertdialog").getByRole("button", { name: "Reset data" }).click();
-  await toast("Demo data restored");
+  await toast("Sample data restored");
   assert.equal(await rows().count(), 13);
   // Layla was moved during the drag test; reset puts her back in Lead.
   await page.goto(`${BASE}/pipeline`);
@@ -221,6 +241,14 @@ await step("mobile layout has no horizontal overflow", async () => {
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
     assert.equal(overflow, false, `overflow on ${path}`);
   }
+});
+
+await step("signs out and protects the app again", async () => {
+  await page.getByRole("button", { name: /^Account menu/ }).click();
+  await page.getByRole("menuitem", { name: "Sign out" }).click();
+  await page.waitForURL(/\/login$/);
+  await page.goto(`${BASE}/pipeline`);
+  await page.waitForURL(/\/login\?next=%2Fpipeline/);
 });
 
 await browser.close();
