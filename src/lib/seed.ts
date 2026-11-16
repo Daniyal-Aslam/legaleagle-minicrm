@@ -268,6 +268,7 @@ export function createSeedData(now: Date = new Date()): CrmData {
 
     for (const event of events) {
       const createdAt = iso(event.at);
+      updatedAt = createdAt; // events are oldest → newest
       const author = event.by ?? TEAM.mariam;
       if (event.kind === "status") {
         activities.push(
@@ -280,7 +281,6 @@ export function createSeedData(now: Date = new Date()): CrmData {
           }),
         );
         status = event.to;
-        updatedAt = createdAt;
       } else if (event.kind === "note") {
         const noteId = `nt_${seed.key}_${notes.length}`;
         notes.push({ id: noteId, contactId: id, content: event.text, createdAt, author });

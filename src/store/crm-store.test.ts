@@ -146,6 +146,7 @@ describe("contact lifecycle", () => {
     const note = store.getState().addNote(contact.id, "  Called the client.  ");
     expect(note).toMatchObject({ content: "Called the client.", author: "Tester" });
     expect(store.getState().activities[0]).toMatchObject({ type: "note_added", contactId: contact.id });
+    expect(store.getState().contacts.find((c) => c.id === contact.id)?.updatedAt).toBe(note?.createdAt);
   });
 
   it("cascades deletes to notes and activities", () => {

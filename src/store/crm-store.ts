@@ -207,6 +207,7 @@ export function createCrmStore({ adapter, now = () => new Date(), author = CURRE
           author,
         });
         commit({
+          contacts: touch(get().contacts, contactId, createdAt),
           notes: [note, ...get().notes],
           activities: [activity, ...get().activities],
         });
@@ -215,14 +216,18 @@ export function createCrmStore({ adapter, now = () => new Date(), author = CURRE
 
       recordFollowUp(contactId, channel, summary) {
         if (!findContact(contactId)) return false;
+        const createdAt = timestamp();
         const activity = buildActivity({
           contactId,
           type: "follow_up",
           metadata: { channel, summary: summary.trim() },
-          createdAt: timestamp(),
+          createdAt,
           author,
         });
-        commit({ activities: [activity, ...get().activities] });
+        commit({
+          contacts: touch(get().contacts, contactId, createdAt),
+          activities: [activity, ...get().activities],
+        });
         return true;
       },
 
@@ -236,6 +241,14 @@ export function createCrmStore({ adapter, now = () => new Date(), author = CURRE
       },
     };
   });
+}
+
+/**
+ * Any recorded interaction (edit, status move, note, follow-up) counts as an
+ * update to the relationship record, so "Last updated" reflects real activity.
+ */
+function touch(contacts: Contact[], id: string, updatedAt: string) {
+  return contacts.map((c) => (c.id === id ? { ...c, updatedAt } : c));
 }
 
 /** Case-insensitive duplicate check used by the contact form. */
