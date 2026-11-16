@@ -1,20 +1,27 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { CheckCircle2 } from "lucide-react";
-import { LoginForm } from "@/components/auth/login-form";
+import { PipelinePreview, type PreviewCard } from "@/components/auth/pipeline-preview";
+import { SignInPanel } from "@/components/auth/sign-in-panel";
 import { DEMO_PASSWORD_HINT, listDemoAccounts } from "@/lib/auth/mock-users";
+import { createSeedData } from "@/lib/seed";
+import { CONTACT_STATUSES } from "@/types/contact";
 
 export const metadata: Metadata = { title: "Sign in" };
-
-const HIGHLIGHTS = [
-  "Every enquiry captured, searchable in seconds",
-  "A clear intake pipeline from lead to closed",
-  "Notes and a full activity history on every profile",
-];
 
 /** Only allow same-origin relative redirects after sign-in. */
 function safeNext(value: string | string[] | undefined) {
   return typeof value === "string" && value.startsWith("/") && !value.startsWith("//") ? value : "/";
+}
+
+/** A handful of sample contacts per stage for the animated board preview. */
+function previewCards(): PreviewCard[] {
+  const { contacts } = createSeedData();
+  return CONTACT_STATUSES.flatMap((status) =>
+    contacts
+      .filter((c) => c.status === status)
+      .slice(0, 3)
+      .map(({ id, firstName, lastName, matterType }) => ({ id, firstName, lastName, matterType, status })),
+  );
 }
 
 export default async function LoginPage({
@@ -25,62 +32,57 @@ export default async function LoginPage({
   const next = safeNext((await searchParams).next);
 
   return (
-    <main className="grid min-h-dvh lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
-      {/* Brand panel */}
-      <section
-        aria-label="Legal Eagle"
-        className="relative hidden overflow-hidden bg-brand-ink px-12 py-12 text-sidebar-foreground lg:flex lg:flex-col xl:px-16"
-      >
-        <div aria-hidden className="pointer-events-none absolute -top-40 -right-40 size-[28rem] rounded-full border border-brand-gold/10" />
-        <div aria-hidden className="pointer-events-none absolute -top-24 -right-24 size-[20rem] rounded-full border border-brand-gold/10" />
+    <main className="relative isolate min-h-dvh overflow-hidden bg-brand-ink">
+      {/* Atmosphere: warm glow, faint dot grid and a large eagle watermark */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(60rem_40rem_at_85%_-10%,color-mix(in_oklab,var(--brand-gold)_18%,transparent),transparent_70%),radial-gradient(40rem_30rem_at_0%_110%,color-mix(in_oklab,var(--brand-bronze)_14%,transparent),transparent_70%)]"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10 opacity-[0.07] [background-image:radial-gradient(white_1px,transparent_1px)] [background-size:28px_28px] [mask-image:linear-gradient(to_bottom,black,transparent_85%)]"
+      />
+      <Image
+        src="/brand/legal-eagle-mark.png"
+        alt=""
+        aria-hidden
+        width={240}
+        height={200}
+        className="pointer-events-none absolute -bottom-24 -left-24 -z-10 w-[34rem] max-w-none opacity-[0.04]"
+      />
 
-        <div className="flex items-center gap-3">
-          <Image src="/brand/legal-eagle-mark.png" alt="" width={240} height={200} priority className="h-10 w-auto" />
-          <div className="leading-tight">
-            <p className="font-heading text-lg font-semibold text-white">Legal Eagle</p>
-            <p className="text-2xs font-medium tracking-[0.14em] text-brand-gold uppercase">Client Intake</p>
-          </div>
-        </div>
-
-        <div className="my-auto max-w-md py-16">
-          <div aria-hidden className="mb-6 h-px w-16 bg-gradient-to-r from-brand-bronze to-brand-gold" />
-          <h1 className="font-heading text-4xl leading-tight font-semibold text-white xl:text-[2.75rem]">
-            Client intake, handled with care.
-          </h1>
-          <p className="mt-4 text-md leading-relaxed text-ink-300">
-            The workspace for Legal Eagle&apos;s intake team: track every prospective and existing client
-            from first enquiry to closed engagement.
-          </p>
-          <ul className="mt-8 space-y-3">
-            {HIGHLIGHTS.map((item) => (
-              <li key={item} className="flex items-start gap-3 text-sm text-sidebar-foreground">
-                <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-brand-gold" aria-hidden />
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <p className="text-xs text-ink-500">© {new Date().getFullYear()} Legal Eagle UAE · Internal use only</p>
-      </section>
-
-      {/* Form panel */}
-      <section className="flex flex-col justify-center px-4 py-10 sm:px-8">
-        <div className="mx-auto w-full max-w-[25rem]">
-          <div className="mb-8 flex items-center gap-3 lg:hidden">
-            <Image src="/brand/legal-eagle-mark.png" alt="" width={240} height={200} priority className="h-9 w-auto" />
+      <div className="mx-auto flex min-h-dvh w-full max-w-[90rem] flex-col px-5 py-6 sm:px-10 lg:px-14">
+        <header className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Image src="/brand/legal-eagle-mark.png" alt="Legal Eagle" width={240} height={200} priority className="h-9 w-auto" />
             <div className="leading-tight">
-              <p className="font-heading text-md font-semibold">Legal Eagle</p>
-              <p className="text-2xs font-medium tracking-[0.14em] text-brand-bronze uppercase">Client Intake</p>
+              <p className="font-heading text-md font-semibold text-white">Legal Eagle</p>
+              <p className="text-2xs font-medium tracking-[0.14em] text-brand-gold uppercase">Client Intake</p>
             </div>
           </div>
+          <span className="hidden rounded-full border border-white/10 px-3 py-1 text-xs text-ink-300 sm:inline">
+            Internal workspace
+          </span>
+        </header>
 
-          <h2 className="font-heading text-3xl font-semibold">Welcome back</h2>
-          <p className="mt-1.5 text-muted-foreground">Sign in to the intake workspace.</p>
+        <div className="grid flex-1 items-center gap-12 py-10 lg:grid-cols-[minmax(0,30rem)_minmax(0,1fr)] lg:gap-16 xl:gap-24">
+          <SignInPanel next={next} accounts={listDemoAccounts()} demoPassword={DEMO_PASSWORD_HINT} />
 
-          <LoginForm next={next} demoAccounts={listDemoAccounts()} demoPassword={DEMO_PASSWORD_HINT} />
+          <div className="hidden justify-end lg:flex">
+            <div className="w-full max-w-[44rem]">
+              <p className="mb-4 text-xs font-semibold tracking-[0.14em] text-ink-300 uppercase">
+                Inside the workspace
+              </p>
+              <PipelinePreview cards={previewCards()} />
+            </div>
+          </div>
         </div>
-      </section>
+
+        <footer className="flex flex-wrap items-center justify-between gap-2 text-xs text-ink-500">
+          <span>© {new Date().getFullYear()} Legal Eagle UAE</span>
+          <span>Mock authentication · fictional sample data</span>
+        </footer>
+      </div>
     </main>
   );
 }

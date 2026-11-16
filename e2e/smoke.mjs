@@ -49,19 +49,21 @@ console.log(`Running against ${BASE}`);
 await step("redirects signed-out visitors to sign in", async () => {
   await page.goto(`${BASE}/contacts`);
   await page.waitForURL(/\/login\?next=%2Fcontacts/);
-  await page.getByRole("heading", { name: "Welcome back" }).waitFor();
+  await page.getByRole("heading", { name: /intake desk today/ }).waitFor();
 });
 
-await step("rejects an incorrect password", async () => {
-  await page.getByLabel("Work email").fill("mariam@legaleagle.test");
+await step("rejects an incorrect password (email sign-in)", async () => {
+  await page.getByRole("button", { name: "Sign in with email instead" }).click();
+  await page.getByRole("textbox", { name: "Work email" }).fill("mariam@legaleagle.test");
   await page.getByRole("textbox", { name: "Password" }).fill("wrong-password");
-  await page.getByRole("button", { name: "Sign in" }).click();
+  await page.getByRole("button", { name: "Sign in", exact: true }).click();
   await page.getByRole("alert").filter({ hasText: "Incorrect email or password." }).waitFor();
 });
 
-await step("signs in with a mock account and returns to the requested page", async () => {
+await step("signs in by picking a profile and returns to the requested page", async () => {
+  await page.getByRole("button", { name: "Back to profiles" }).click();
   await page.getByRole("button", { name: /Mariam Al Hashimi/ }).click();
-  await page.getByRole("button", { name: "Sign in" }).click();
+  await page.getByRole("button", { name: "Continue as Mariam" }).click();
   await page.waitForURL(/\/contacts$/);
   await page.getByRole("button", { name: "Account menu for Mariam Al Hashimi" }).waitFor();
 });

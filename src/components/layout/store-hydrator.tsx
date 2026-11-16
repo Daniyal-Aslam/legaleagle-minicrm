@@ -21,6 +21,15 @@ export function StoreHydrator() {
   useEffect(() => {
     crm().hydrate();
 
+    if (crmStore.getState().persistence === "unavailable") {
+      window.setTimeout(() =>
+        toast.warning("Browser storage is blocked", {
+          description: "You can keep working, but changes will be lost when you close or refresh this tab.",
+          duration: 10_000,
+        }),
+      );
+    }
+
     const notice = crmStore.getState().recoveryNotice;
     if (notice) {
       crm().dismissRecoveryNotice();
