@@ -14,12 +14,7 @@ export function BrandMark({ className, collapsed }: { className?: string; collap
         className="h-8 w-auto shrink-0"
       />
       {!collapsed ? (
-        <div className="min-w-0 leading-tight">
-          <p className="truncate font-heading text-md font-semibold tracking-tight text-white">Legal Eagle</p>
-          <p className="truncate text-2xs font-medium tracking-[0.14em] text-brand-gold uppercase">
-            Client Intake
-          </p>
-        </div>
+        <p className="min-w-0 truncate font-heading text-lg font-semibold tracking-tight text-white">Legal Eagle</p>
       ) : null}
     </div>
   );

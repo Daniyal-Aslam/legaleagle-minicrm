@@ -49,21 +49,18 @@ console.log(`Running against ${BASE}`);
 await step("redirects signed-out visitors to sign in", async () => {
   await page.goto(`${BASE}/contacts`);
   await page.waitForURL(/\/login\?next=%2Fcontacts/);
-  await page.getByRole("heading", { name: /intake desk today/ }).waitFor();
+  await page.getByRole("heading", { name: "Welcome back" }).waitFor();
 });
 
 await step("rejects an incorrect password (email sign-in)", async () => {
-  await page.getByRole("button", { name: "Sign in with email instead" }).click();
   await page.getByRole("textbox", { name: "Work email" }).fill("mariam@legaleagle.test");
   await page.getByRole("textbox", { name: "Password" }).fill("wrong-password");
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
   await page.getByRole("alert").filter({ hasText: "Incorrect email or password." }).waitFor();
 });
 
-await step("signs in by picking a profile and returns to the requested page", async () => {
-  await page.getByRole("button", { name: "Back to profiles" }).click();
-  await page.getByRole("button", { name: /Mariam Al Hashimi/ }).click();
-  await page.getByRole("button", { name: "Continue as Mariam" }).click();
+await step("signs in with a one-click demo account and returns to the requested page", async () => {
+  await page.getByRole("button", { name: /Continue as Mariam Al Hashimi/ }).click();
   await page.waitForURL(/\/contacts$/);
   await page.getByRole("button", { name: "Account menu for Mariam Al Hashimi" }).waitFor();
 });
@@ -82,7 +79,7 @@ await step("searches by name, company and phone digits", async () => {
   assert.equal(await rows().count(), 1);
   await search.fill("zzzz-no-match");
   await page.getByText("No matching contacts").waitFor();
-  await page.getByRole("button", { name: "Clear filters" }).click();
+  await page.getByRole("button", { name: "Clear all filters" }).click();
   await page.waitForFunction(() => document.querySelectorAll("table tbody tr").length === 13);
 });
 
@@ -96,6 +93,25 @@ await step("filters each status and persists filters in the URL", async () => {
   await page.reload();
   await page.waitForFunction(() => document.querySelectorAll("table tbody tr").length === 3);
   await group.getByRole("button", { name: /^All/ }).click();
+});
+
+await step("filters by practice area and source with removable chips", async () => {
+  await page.getByRole("button", { name: /^Practice area filter/ }).click();
+  await page.getByRole("menuitemcheckbox", { name: /^Real Estate/ }).click();
+  await page.keyboard.press("Escape");
+  await page.waitForFunction(() => document.querySelectorAll("table tbody tr").length === 2);
+  await page.getByText(/Showing 2 of 13 contacts/).waitFor();
+  await page.waitForURL(/matter=Real\+Estate/);
+  await page.reload();
+  await page.waitForFunction(() => document.querySelectorAll("table tbody tr").length === 2);
+  await page.getByRole("button", { name: "Remove filter Real Estate" }).click();
+  await page.waitForFunction(() => document.querySelectorAll("table tbody tr").length === 13);
+  await page.getByRole("button", { name: /^Source filter/ }).click();
+  await page.getByRole("menuitemcheckbox", { name: /^Website/ }).click();
+  await page.keyboard.press("Escape");
+  await page.waitForFunction(() => document.querySelectorAll("table tbody tr").length === 3);
+  await page.getByRole("button", { name: "Clear all", exact: true }).click();
+  await page.waitForFunction(() => document.querySelectorAll("table tbody tr").length === 13);
 });
 
 await step("sorts by name both directions", async () => {

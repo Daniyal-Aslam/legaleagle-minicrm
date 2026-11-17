@@ -19,11 +19,11 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: {
-    default: "Legal Eagle · Client Intake CRM",
+    default: "Legal Eagle CRM",
     template: "%s · Legal Eagle CRM",
   },
   description:
-    "Client intake CRM demo for Legal Eagle UAE — manage enquiries, notes and the intake pipeline. Demonstration environment with fictional data.",
+    "CRM demo for Legal Eagle UAE. Manage enquiries, notes and the client pipeline. Demonstration environment with fictional data.",
   robots: { index: false, follow: false },
 };
 

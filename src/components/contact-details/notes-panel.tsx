@@ -48,7 +48,7 @@ export function NotesPanel({ contactId }: { contactId: string }) {
           compact
           icon={NotebookPen}
           title="No notes yet"
-          description="Capture call outcomes, client preferences or next steps so the whole intake team has context."
+          description="Capture call outcomes, client preferences or next steps so the whole team has context."
         />
       )}
     </section>

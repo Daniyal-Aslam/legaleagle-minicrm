@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { DraggablePipelineCard } from "./pipeline-card";
 
 const EMPTY_COPY: Record<ContactStatus, { icon: typeof Inbox; title: string; description: string }> = {
-  lead: { icon: Inbox, title: "No open leads", description: "New enquiries land here. Add a contact to start intake." },
+  lead: { icon: Inbox, title: "No open leads", description: "New enquiries land here. Add a contact to get started." },
   active: { icon: UserCheck, title: "No active clients", description: "Drag a qualified lead here, or use its move menu." },
   closed: { icon: Archive, title: "Nothing closed yet", description: "Concluded or declined engagements will collect here." },
 };
@@ -47,7 +47,7 @@ export function PipelineColumn({ status, contacts, latestActivity, loading, drag
           {STATUS_META[status].label}
         </h2>
         <span className="rounded-full bg-card px-2 text-xs leading-5 font-medium text-muted-foreground tabular-nums ring-1 ring-border">
-          {loading ? "–" : contacts.length}
+          {loading ? "…" : contacts.length}
         </span>
         <p className="ml-auto hidden truncate text-xs text-muted-foreground xl:block">{STATUS_META[status].description}</p>
       </header>

@@ -6,9 +6,15 @@ import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/shared/page-header";
 import { EmptyState } from "@/components/shared/state-panels";
 import type { Contact } from "@/types/contact";
-import { getStatusCounts, queryContacts } from "@/lib/contacts/selectors";
-import { STATUS_META } from "@/lib/constants";
-import type { StatusFilter } from "@/lib/contacts/selectors";
+import {
+  ADDED_LABELS,
+  countActiveFilters,
+  getContactFacets,
+  getStatusCounts,
+  queryContacts,
+  type ContactQuery,
+} from "@/lib/contacts/selectors";
+import { CONTACT_SOURCES, MATTER_TYPES, STATUS_META } from "@/lib/constants";
 import { pluralize } from "@/lib/utils";
 import { useCrm, useLatestActivityMap } from "@/store";
 import { useUiStore } from "@/store/ui-store";
@@ -30,7 +36,10 @@ export function ContactsView() {
 
   const counts = useMemo(() => getStatusCounts(contacts), [contacts]);
   const results = useMemo(() => queryContacts(contacts, query), [contacts, query]);
-  const isFiltered = query.search.trim() !== "" || query.status !== "all";
+  const facets = useMemo(
+    () => getContactFacets(contacts, query, { matters: MATTER_TYPES, sources: CONTACT_SOURCES }),
+    [contacts, query],
+  );
 
   return (
     <div className="space-y-6">
@@ -38,8 +47,8 @@ export function ContactsView() {
         title="Contacts"
         description={
           hydrated
-            ? `${pluralize(counts.all, "contact")} across the intake pipeline. Search, filter and open a profile to log notes.`
-            : "Prospective and existing clients across the intake pipeline."
+            ? `${pluralize(counts.all, "contact")} across the pipeline. Search, filter and open a profile to log notes.`
+            : "Prospective and existing clients across the pipeline."
         }
         actions={
           <Button onClick={openCreate} size="lg">
@@ -52,7 +61,12 @@ export function ContactsView() {
       <ContactStats />
 
       <section aria-label="Contact list" className="space-y-3">
-        <ContactsToolbar controls={controls} counts={hydrated ? counts : null} />
+        <ContactsToolbar
+          controls={controls}
+          facets={hydrated ? facets : null}
+          total={counts.all}
+          resultCount={results.length}
+        />
 
         <div className="overflow-hidden rounded-xl border bg-card shadow-xs">
           {!hydrated ? (
@@ -71,7 +85,7 @@ export function ContactsView() {
             <EmptyState
               icon={UserPlus}
               title="No contacts yet"
-              description="Add your first enquiry to start building the intake pipeline, or restore the sample dataset from your account menu."
+              description="Add your first enquiry to start building the pipeline, or restore the sample dataset from your account menu."
               action={
                 <Button onClick={openCreate}>
                   <Plus aria-hidden />
@@ -83,10 +97,10 @@ export function ContactsView() {
             <EmptyState
               icon={SearchX}
               title="No matching contacts"
-              description={emptyResultsMessage(query.search, query.status)}
+              description={emptyResultsMessage(query)}
               action={
                 <Button variant="outline" onClick={controls.reset}>
-                  Clear filters
+                  Clear all filters
                 </Button>
               }
             />
@@ -108,11 +122,6 @@ export function ContactsView() {
           )}
         </div>
 
-        {hydrated && results.length > 0 ? (
-          <p className="px-1 text-xs text-muted-foreground" role="status" aria-live="polite">
-            {isFiltered ? `Showing ${results.length} of ${pluralize(counts.all, "contact")}` : `${pluralize(results.length, "contact")}`}
-          </p>
-        ) : null}
       </section>
 
       <DeleteContactDialog contact={pendingDelete} onOpenChange={(open) => !open && setPendingDelete(null)} />
@@ -120,9 +129,18 @@ export function ContactsView() {
   );
 }
 
-function emptyResultsMessage(search: string, status: StatusFilter) {
-  const term = search.trim();
-  const scope = status === "all" ? "" : ` in ${STATUS_META[status].label}`;
+function emptyResultsMessage(query: ContactQuery) {
+  const term = query.search.trim();
+  const parts = [
+    query.status !== "all" ? STATUS_META[query.status].label.toLowerCase() : null,
+    query.matters.length ? query.matters.join(" or ") : null,
+    query.sources.length ? `from ${query.sources.join(" or ")}` : null,
+    query.added !== "any" ? `added in the ${ADDED_LABELS[query.added].toLowerCase()}` : null,
+  ].filter(Boolean);
+  const scope = parts.length ? ` among ${parts.join(", ")} contacts` : "";
   if (term) return `Nothing matches “${term}”${scope}. Check the spelling, or search by email, phone or company.`;
-  return status === "all" ? "No contacts to show." : `There are no ${STATUS_META[status].label.toLowerCase()} contacts right now.`;
+  if (countActiveFilters(query) > 1) return `No contacts match all ${countActiveFilters(query)} filters. Try removing one.`;
+  return query.status !== "all" && parts.length === 1
+    ? `There are no ${parts[0]} contacts right now.`
+    : "No contacts match this filter right now.";
 }

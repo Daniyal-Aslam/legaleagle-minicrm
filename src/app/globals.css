@@ -136,6 +136,8 @@
   --color-bronze-200: var(--bronze-200);
   --color-bronze-700: var(--bronze-700);
   --color-bronze-800: var(--bronze-800);
+  --color-ink-800: var(--ink-800);
+  --color-ink-700: var(--ink-700);
   --color-ink-500: var(--ink-500);
   --color-ink-300: var(--ink-300);
 
@@ -213,5 +215,15 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* Indeterminate progress bar on the sign-in hand-off. */
+@keyframes login-progress {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(300%);
   }
 }

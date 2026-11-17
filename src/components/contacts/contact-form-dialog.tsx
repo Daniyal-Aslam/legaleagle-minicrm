@@ -50,7 +50,7 @@ export function ContactFormDialog() {
           <DialogDescription>
             {isEdit && contact
               ? `Update ${getFullName(contact)}'s details. Changes are recorded in the activity timeline.`
-              : "Capture the essentials now — you can add notes and follow-ups from the profile."}
+              : "Capture the essentials now. You can add notes and follow-ups from the profile."}
           </DialogDescription>
         </DialogHeader>
         {/* Keyed so each open starts from fresh default values. */}
@@ -130,7 +130,7 @@ function ContactForm({ contact, onDone }: { contact?: Contact; onDone: () => voi
 
         <fieldset className="space-y-4">
           <legend className="mb-3 text-xs font-semibold tracking-[0.08em] text-muted-foreground uppercase">
-            Intake details
+            Matter details
           </legend>
           <div className="grid gap-4 sm:grid-cols-2">
             <FormField id="status" label="Status" required error={errors.status?.message}>
@@ -166,7 +166,7 @@ function ContactForm({ contact, onDone }: { contact?: Contact; onDone: () => voi
             id="additionalInformation"
             label="Additional information"
             error={errors.additionalInformation?.message}
-            hint="Context for the team — availability, language preference, referral details."
+            hint="Context for the team: availability, language preference, referral details."
           >
             {(p) => (
               <Textarea

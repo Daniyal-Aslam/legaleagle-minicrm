@@ -52,7 +52,7 @@ const SEED: SeedContact[] = [
     createdDaysAgo: 41.3,
     createdBy: TEAM.yousef,
     events: [
-      { at: 39.1, kind: "follow_up", channel: "call", summary: "Intro call — outlined the review process and fee structure.", by: TEAM.yousef },
+      { at: 39.1, kind: "follow_up", channel: "call", summary: "Intro call: outlined the review process and fee structure.", by: TEAM.yousef },
       { at: 38.9, kind: "status", to: "active", by: TEAM.yousef },
       { at: 12.4, kind: "note", text: "Engagement letter countersigned. Documents shared through the client portal; awaiting the second batch.", by: TEAM.hana },
       { at: 2.2, kind: "follow_up", channel: "email", summary: "Sent a reminder about the outstanding shareholder documents." },

@@ -10,7 +10,7 @@ export default function NotFound() {
         <p className="text-xs font-semibold tracking-[0.14em] text-brand-bronze uppercase">Error 404</p>
         <h1 className="text-3xl font-semibold">This page doesn&apos;t exist</h1>
         <p className="max-w-md text-muted-foreground">
-          The link may be outdated or mistyped. Head back to the intake workspace to continue.
+          The link may be outdated or mistyped. Head back to the workspace to continue.
         </p>
       </div>
       <div className="flex gap-2">

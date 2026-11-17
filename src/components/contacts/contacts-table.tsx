@@ -78,7 +78,7 @@ export function ContactsTable({ contacts, latestActivity, query, onSort, onDelet
                     <p className="truncate text-xs text-muted-foreground">{activity.description}</p>
                   </div>
                 ) : (
-                  <span className="text-subtle-foreground">—</span>
+                  <span className="text-subtle-foreground">No activity</span>
                 )}
               </Td>
               <Td className="pr-3 text-right">

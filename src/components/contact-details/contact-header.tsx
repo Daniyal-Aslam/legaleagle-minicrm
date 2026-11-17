@@ -128,7 +128,7 @@ function ContactChip({
   return (
     <a
       href={href}
-      aria-label={`${value} — contact by ${label}`}
+      aria-label={`${value}, contact by ${label}`}
       className="inline-flex h-8 max-w-full items-center gap-2 rounded-md border bg-muted/40 px-2.5 text-sm text-foreground outline-none transition-colors hover:border-border-strong hover:bg-muted focus-visible:ring-[3px] focus-visible:ring-ring/35"
     >
       <Icon className="size-3.5 shrink-0 text-muted-foreground" aria-hidden />

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Contact } from "@/types/contact";
-import { DEFAULT_QUERY, getStatusCounts, matchesSearch, queryContacts } from "./selectors";
+import { DEFAULT_QUERY, UNSPECIFIED, countActiveFilters, getContactFacets, getStatusCounts, matchesSearch, queryContacts } from "./selectors";
 import { contactFormSchema } from "@/schemas/contact";
 
 const make = (overrides: Partial<Contact>): Contact => ({
@@ -47,6 +47,51 @@ describe("queryContacts", () => {
 
   it("counts statuses", () => {
     expect(getStatusCounts(contacts)).toEqual({ all: 3, lead: 1, active: 1, closed: 1 });
+  });
+});
+
+describe("attribute filters", () => {
+  const now = new Date("2026-03-01T00:00:00.000Z");
+  const pool = [
+    make({ id: "re1", status: "lead", matterType: "Real Estate", source: "Website", createdAt: "2026-02-27T00:00:00.000Z" }),
+    make({ id: "re2", status: "active", matterType: "Real Estate", source: "Referral", createdAt: "2026-01-10T00:00:00.000Z" }),
+    make({ id: "fam", status: "lead", matterType: "Family", source: "Website", createdAt: "2026-02-20T00:00:00.000Z" }),
+    make({ id: "none", status: "closed", createdAt: "2025-10-01T00:00:00.000Z" }),
+  ];
+  const ids = (q: Partial<typeof DEFAULT_QUERY>) => queryContacts(pool, { ...DEFAULT_QUERY, sort: "name", ...q }, now).map((c) => c.id).sort();
+
+  it("filters by any of the selected practice areas", () => {
+    expect(ids({ matters: ["Real Estate"] })).toEqual(["re1", "re2"]);
+    expect(ids({ matters: ["Real Estate", "Family"] })).toEqual(["fam", "re1", "re2"]);
+    expect(ids({ matters: [UNSPECIFIED] })).toEqual(["none"]);
+  });
+
+  it("combines source, status and date added", () => {
+    expect(ids({ sources: ["Website"] })).toEqual(["fam", "re1"]);
+    expect(ids({ sources: ["Website"], status: "lead", added: "7d" })).toEqual(["re1"]);
+    expect(ids({ added: "30d" })).toEqual(["fam", "re1"]);
+    expect(ids({ added: "90d" })).toEqual(["fam", "re1", "re2"]);
+  });
+
+  it("counts each facet against the other active filters", () => {
+    const facets = getContactFacets(pool, { ...DEFAULT_QUERY, sources: ["Website"] }, { matters: ["Real Estate", "Family", "Employment"], sources: ["Website", "Referral"] }, now);
+    expect(facets.status).toEqual({ all: 2, lead: 2, active: 0, closed: 0 });
+    expect(facets.matters).toEqual([
+      { value: "Real Estate", count: 1 },
+      { value: "Family", count: 1 },
+      { value: "Employment", count: 0 },
+    ]);
+    // The source facet ignores its own selection so other sources stay pickable.
+    expect(facets.sources).toEqual([
+      { value: "Website", count: 2 },
+      { value: "Referral", count: 1 },
+      { value: UNSPECIFIED, count: 1 },
+    ]);
+  });
+
+  it("counts active filters", () => {
+    expect(countActiveFilters(DEFAULT_QUERY)).toBe(0);
+    expect(countActiveFilters({ ...DEFAULT_QUERY, status: "lead", matters: ["A", "B"], added: "7d" })).toBe(4);
   });
 });
 

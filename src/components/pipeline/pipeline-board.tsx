@@ -104,8 +104,8 @@ export function PipelineBoard() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Intake pipeline"
-        description="Move contacts through intake by dragging cards between stages, or use the move menu on any card."
+        title="Pipeline"
+        description="Move contacts through the stages by dragging cards between stages, or use the move menu on any card."
         actions={
           <Button size="lg" onClick={() => useUiStore.getState().openCreateContact()}>
             <Plus aria-hidden />

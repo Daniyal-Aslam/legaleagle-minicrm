@@ -31,7 +31,7 @@ export const contactFormSchema = z.object({
     .refine((value) => {
       const digits = value.replace(/\D/g, "").length;
       return digits >= 7 && digits <= 15;
-    }, "Phone number should contain 7–15 digits"),
+    }, "Phone number should contain 7 to 15 digits"),
   status: z.enum(CONTACT_STATUSES, { error: "Select a status" }),
   company: optionalText(100, "Company"),
   matterType: optionalText(60, "Matter type"),

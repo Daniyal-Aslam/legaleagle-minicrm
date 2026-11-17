@@ -80,7 +80,10 @@ export function Topbar() {
         <kbd className="hidden rounded border bg-muted px-1.5 font-sans text-2xs leading-5 sm:inline">Ctrl K</kbd>
       </button>
 
-      <UserMenu />
+      {/* Tablet/desktop show the account menu in the sidebar footer. */}
+      <div className="md:hidden">
+        <UserMenu />
+      </div>
 
       <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
         <SheetContent side="left" className="w-72 gap-0 border-sidebar-border bg-sidebar p-0 text-sidebar-foreground [&>button]:text-white">

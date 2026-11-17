@@ -29,8 +29,8 @@ export function OverviewView() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Intake overview"
-        description="A snapshot of the client intake pipeline and what needs attention today."
+        title="Overview"
+        description="A snapshot of the pipeline and what needs attention today."
         actions={
           <Button size="lg" onClick={() => useUiStore.getState().openCreateContact()}>
             <Plus aria-hidden />
@@ -53,8 +53,8 @@ export function OverviewView() {
 function Card({ title, action, children }: { title: string; action?: React.ReactNode; children: React.ReactNode }) {
   return (
     <section className="rounded-xl border bg-card shadow-xs">
-      <header className="flex items-center justify-between gap-3 border-b px-5 py-3.5">
-        <h2 className="text-md font-semibold">{title}</h2>
+      <header className="flex flex-wrap items-center justify-between gap-x-3 gap-y-0.5 border-b px-4 py-3.5 sm:px-5">
+        <h2 className="text-md font-semibold whitespace-nowrap">{title}</h2>
         {action}
       </header>
       {children}
@@ -107,7 +107,7 @@ function PipelineSnapshot({ hydrated }: { hydrated: boolean }) {
                   {STATUS_META[status].label}
                 </span>
                 <span className="mt-1 block font-heading text-xl font-semibold tabular-nums">
-                  {hydrated ? counts[status] : "–"}
+                  {hydrated ? counts[status] : "…"}
                 </span>
               </Link>
             </li>
@@ -146,18 +146,20 @@ function NeedsAttention({ hydrated }: { hydrated: boolean }) {
       ) : (
         <ul className="divide-y">
           {stale.map(({ contact, lastTouch }) => (
-            <li key={contact.id} className="flex items-center gap-3 px-5 py-3">
+            <li key={contact.id} className="flex items-center gap-3 px-4 py-3 sm:px-5">
               <ContactAvatar contact={contact} size="sm" />
-              <div className="min-w-0 flex-1">
-                <Link href={`/contacts/${contact.id}`} className="block truncate text-sm font-medium hover:text-bronze-800">
-                  {getFullName(contact)}
-                </Link>
-                <p className="truncate text-xs text-muted-foreground">{contact.matterType ?? contact.email}</p>
-              </div>
-              <span className="flex shrink-0 items-center gap-1.5 text-xs text-status-lead-fg">
+              <div className="flex min-w-0 flex-1 flex-col gap-x-3 sm:flex-row sm:items-center">
+                <div className="min-w-0 flex-1">
+                  <Link href={`/contacts/${contact.id}`} className="block truncate text-sm font-medium hover:text-bronze-800">
+                    {getFullName(contact)}
+                  </Link>
+                  <p className="truncate text-xs text-muted-foreground">{contact.matterType ?? contact.email}</p>
+                </div>
+                <span className="mt-1 flex shrink-0 items-center gap-1.5 text-xs text-status-lead-fg sm:mt-0">
                 <BellRing className="size-3.5" aria-hidden />
-                Last touch {formatRelative(lastTouch)}
-              </span>
+                  Last touch {formatRelative(lastTouch)}
+                </span>
+              </div>
             </li>
           ))}
         </ul>
