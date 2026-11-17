@@ -4,13 +4,10 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { AlertCircle, ArrowRight, Check, Eye, EyeOff, Loader2 } from "lucide-react";
 import { loginSchema } from "@/schemas/auth";
-import type { DemoAccount } from "@/types/user";
 import { cn } from "@/lib/utils";
 
 interface Props {
   next: string;
-  accounts: DemoAccount[];
-  demoPassword: string;
 }
 
 type Credentials = { email: string; password: string };
@@ -20,12 +17,12 @@ const fieldClass =
 
 const labelClass = "mb-1.5 block text-sm font-medium text-foreground";
 
-export function SignInForm({ next, accounts, demoPassword }: Props) {
+export function SignInForm({ next }: Props) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  /** Which control started the request: "form" or a demo account's email. */
+  /** Which control started the request ("form" while submitting). */
   const [pending, setPending] = useState<string | null>(null);
   /** Set once the server accepts the credentials; holds the first name for the welcome screen. */
   const [welcomeName, setWelcomeName] = useState<string | null>(null);
@@ -89,12 +86,6 @@ export function SignInForm({ next, accounts, demoPassword }: Props) {
     void signIn({ email, password }, "form");
   };
 
-  const signInAs = (account: DemoAccount) => {
-    setEmail(account.email);
-    setPassword(demoPassword);
-    void signIn({ email: account.email, password: demoPassword }, account.email);
-  };
-
   if (entering) {
     return (
       <div role="status" aria-live="polite" className="animate-in fade-in w-full duration-300">
@@ -139,7 +130,7 @@ export function SignInForm({ next, accounts, demoPassword }: Props) {
             autoComplete="username"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="name@legaleagle.test"
+            placeholder="name@company.com"
             disabled={busy}
             aria-invalid={Boolean(fieldErrors.email)}
             aria-describedby={fieldErrors.email ? "login-email-error" : undefined}
@@ -203,50 +194,6 @@ export function SignInForm({ next, accounts, demoPassword }: Props) {
           </span>
         </button>
       </form>
-
-      <section aria-labelledby="demo-heading" className="mt-10">
-        <div className="flex items-center gap-3">
-          <h2 id="demo-heading" className="shrink-0 font-sans text-xs font-medium text-muted-foreground">
-            Or continue with a demo account
-          </h2>
-          <span className="h-px flex-1 bg-border" aria-hidden />
-        </div>
-        <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-          {accounts.map((account) => {
-            const isPending = pending === account.email;
-            return (
-              <li key={account.email}>
-                <button
-                  type="button"
-                  onClick={() => signInAs(account)}
-                  disabled={busy}
-                  aria-busy={isPending}
-                  aria-label={`Continue as ${account.name}, ${account.role}`}
-                  className={cn(
-                    "group flex w-full cursor-pointer items-center gap-3 rounded-xl border bg-card p-3 text-left outline-none transition-[border-color,box-shadow] hover:border-brand-gold hover:shadow-md focus-visible:ring-[3px] focus-visible:ring-ring/35 disabled:cursor-wait",
-                    isPending ? "border-brand-gold shadow-md" : "border-border",
-                    busy && !isPending && "opacity-50",
-                  )}
-                >
-                  <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand-ink font-heading text-sm font-semibold text-brand-gold">
-                    {isPending ? <Loader2 className="size-4 animate-spin" aria-hidden /> : account.initials}
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm font-medium text-foreground">{account.name}</span>
-                    <span className="block truncate text-xs text-muted-foreground">
-                      {isPending ? "Signing in…" : account.role}
-                    </span>
-                  </span>
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-        <p className="mt-3 text-xs text-muted-foreground">
-          Mock authentication. Every demo account uses the password{" "}
-          <code className="font-mono text-foreground">{demoPassword}</code>.
-        </p>
-      </section>
     </div>
   );
 }

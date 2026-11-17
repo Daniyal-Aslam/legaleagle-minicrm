@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { SignInForm } from "@/components/auth/sign-in-form";
-import { DEMO_PASSWORD_HINT, listDemoAccounts } from "@/lib/auth/mock-users";
 
 export const metadata: Metadata = { title: "Sign in" };
 
@@ -28,13 +27,13 @@ export default async function LoginPage({
 
         <div className="flex flex-1 items-center py-12">
           <div className="mx-auto w-full max-w-[26rem] lg:mx-0">
-            <SignInForm next={next} accounts={listDemoAccounts()} demoPassword={DEMO_PASSWORD_HINT} />
+            <SignInForm next={next} />
           </div>
         </div>
 
         <footer className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
           <span>© {new Date().getFullYear()} Legal Eagle UAE</span>
-          <span>Fictional sample data</span>
+          <span>Authorised personnel only</span>
         </footer>
       </div>
 

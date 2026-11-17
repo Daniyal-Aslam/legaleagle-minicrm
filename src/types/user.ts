@@ -6,6 +6,3 @@ export interface SessionUser {
   role: string;
   initials: string;
 }
-
-/** Public details of a mock account, shown on the sign-in screen. */
-export type DemoAccount = Pick<SessionUser, "name" | "email" | "role" | "initials">;

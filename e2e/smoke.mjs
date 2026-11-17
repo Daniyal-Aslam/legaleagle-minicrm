@@ -59,8 +59,9 @@ await step("rejects an incorrect password (email sign-in)", async () => {
   await page.getByRole("alert").filter({ hasText: "Incorrect email or password." }).waitFor();
 });
 
-await step("signs in with a one-click demo account and returns to the requested page", async () => {
-  await page.getByRole("button", { name: /Continue as Mariam Al Hashimi/ }).click();
+await step("signs in with a demo account and returns to the requested page", async () => {
+  await page.getByRole("textbox", { name: "Password" }).fill("Eagle@2026");
+  await page.getByRole("button", { name: "Sign in", exact: true }).click();
   await page.waitForURL(/\/contacts$/);
   await page.getByRole("button", { name: "Account menu for Mariam Al Hashimi" }).waitFor();
 });

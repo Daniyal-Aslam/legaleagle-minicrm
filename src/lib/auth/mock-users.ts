@@ -1,5 +1,5 @@
 import "server-only";
-import type { DemoAccount, SessionUser } from "@/types/user";
+import type { SessionUser } from "@/types/user";
 
 interface MockUserRecord extends SessionUser {
   /** SHA-256 of the demo password. Real systems would use a slow KDF (argon2/bcrypt). */
@@ -30,8 +30,6 @@ const MOCK_USERS: MockUserRecord[] = [
   },
 ];
 
-export const DEMO_PASSWORD_HINT = "Eagle@2026";
-
 async function sha256Hex(value: string) {
   const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
   return Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, "0")).join("");
@@ -60,8 +58,4 @@ export async function verifyCredentials(email: string, password: string): Promis
 export function findUserById(id: string): SessionUser | null {
   const user = MOCK_USERS.find((u) => u.id === id);
   return user ? toSessionUser(user) : null;
-}
-
-export function listDemoAccounts(): DemoAccount[] {
-  return MOCK_USERS.map(({ name, email, role, initials }) => ({ name, email, role, initials }));
 }

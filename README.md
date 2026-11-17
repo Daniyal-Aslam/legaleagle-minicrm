@@ -7,7 +7,14 @@ npm install && npm run dev        # http://localhost:3000
 npm test                          # 29 unit tests
 BASE_URL=http://localhost:3000 npm run test:e2e   # 22 step browser test (uses local Chrome)
 ```
-Demo logins: `mariam@legaleagle.test` or `yousef@legaleagle.test`, password `Eagle@2026` (or use the one click demo cards).
+Demo logins (mock auth, every account uses the password `Eagle@2026`):
+
+| Name | Role | Email |
+| --- | --- | --- |
+| Mariam Al Hashimi | Intake Coordinator | `mariam@legaleagle.test` |
+| Yousef Khalil | Senior Associate | `yousef@legaleagle.test` |
+
+These are also listed in `.env.example`, alongside `AUTH_SECRET` (copy it to `.env.local`).
 
 ## Component structure and state management
 ```
