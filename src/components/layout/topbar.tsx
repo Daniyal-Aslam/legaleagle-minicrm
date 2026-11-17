@@ -21,29 +21,21 @@ function Breadcrumbs() {
   const contact = useCrm((s) => (contactId ? s.contacts.find((c) => c.id === contactId) : undefined));
 
   if (!section) return <span className="font-medium">Not found</span>;
+  // Top-level pages already show their title in the page header.
+  if (!contactId) return null;
 
   return (
     <nav aria-label="Breadcrumb" className="min-w-0">
       <ol className="flex min-w-0 items-center gap-1.5 text-sm">
         <li className="shrink-0">
-          {contactId ? (
-            <Link href={section.href} className="text-muted-foreground hover:text-foreground">
-              {section.label}
-            </Link>
-          ) : (
-            <span aria-current="page" className="font-medium text-foreground">
-              {section.label}
-            </span>
-          )}
+          <Link href={section.href} className="text-muted-foreground hover:text-foreground">
+            {section.label}
+          </Link>
         </li>
-        {contactId ? (
-          <>
-            <ChevronRight className="size-3.5 shrink-0 text-subtle-foreground" aria-hidden />
-            <li className="min-w-0 truncate font-medium" aria-current="page">
-              {contact ? getFullName(contact) : "Contact"}
-            </li>
-          </>
-        ) : null}
+        <ChevronRight className="size-3.5 shrink-0 text-subtle-foreground" aria-hidden />
+        <li className="min-w-0 truncate font-medium" aria-current="page">
+          {contact ? getFullName(contact) : "Contact"}
+        </li>
       </ol>
     </nav>
   );

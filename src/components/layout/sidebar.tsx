@@ -74,9 +74,6 @@ export function Sidebar() {
       {isWide && collapsed ? <div className="flex justify-center pt-3">{toggle}</div> : null}
 
       <div className={cn("flex-1 overflow-y-auto", collapsed ? "px-2.5 py-3" : "px-3 py-4")}>
-        {!collapsed ? (
-          <p className="mb-2 px-3 text-2xs font-semibold tracking-[0.12em] text-ink-500 uppercase">Workspace</p>
-        ) : null}
         <SidebarNav collapsed={collapsed} />
       </div>
 
